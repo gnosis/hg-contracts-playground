@@ -26,7 +26,8 @@ const setupWeb3 = async () => {
 }
 
 // returns TC wrapped and Provided contract
-const getContract = async (artifact) => {
+const getContract = async (contractName) => {
+  const artifact = await require(`@gnosis.pm/hg-contracts/build/contracts/${contractName}.json`)
   const contract = TruffleContract(artifact)
 
   try {

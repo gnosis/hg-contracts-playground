@@ -1,83 +1,11 @@
-const PredictionMarketSystemArtifact = require("@gnosis.pm/hg-contracts/build/contracts/PredictionMarketSystem.json")
-const WETH9Artifact = require("@gnosis.pm/hg-contracts/build/contracts/WETH9.json")
-//const MarketMaker = require("@gnosis.pm/hg-market")
-const { getContract, getEventFromTxLogs } = require('./utils/contracts')
+const Condition = require('./Condition')
+const Position = require('./Position')
+const TokenTransfer = require('./TokenTransfer')
 const Web3 = require('web3')
-const { toHex, padLeft, keccak256, toBN } = Web3.utils;
 
 let pms, collateral;
 
 const me = "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1"
-
-const prepareConditions = async (questionId, outcomeCount) => {
-  console.log(`... Preparing Conditions with ${outcomeCount} outcomes. QuestionID: ${questionId}`)
-  const tx = await pms.prepareCondition(
-    me,
-    questionId,
-    outcomeCount,
-    {
-      from: me
-    }
-  );
-
-  return getEventFromTxLogs("ConditionPreparation", tx).args
-}
-
-const receiveResult = async (questionId, results) => {
-  console.log(`... Receiving Results for ${questionId}. Results: ["${results.join('", "')}"]`)
-  const result = results.reduce((acc, n) => acc + padLeft(n, 64).slice(2), '')
-
-  const tx = await pms.receiveResult(questionId, `0x${result}`, { from: me, gas: 1e6 })
-  //console.log(JSON.stringify(tx, null, 2))
-}
-
-const addCollateral = async (amount) => {
-  console.log(`... Depositing and Approving ${(amount / 1e18).toFixed(2)} ETH Collateral`)
-
-  // deposit 1e6 collateral
-  await collateral.deposit({ from: me, value: amount, gas: 1e6 })
-  await collateral.approve(pms.address, amount, { from: me })
-}
-
-const createSplit = async (conditionId, indexSets, parent = 0, amount = 1000) => {
-  console.log(`... Splitting position for position ${parent}, conditionId: ${conditionId}, amount: ${amount}. Partitions: ["${indexSets.join('", "')}"]`)
-  
-  const tx = await pms.splitPosition(
-    collateral.address, // collateral address
-    parent, // parent collection
-    conditionId, // condition id
-    indexSets, // partition
-    amount, // amount
-    { from: me, gas: 1e6 }
-  )
-  //console.log(JSON.stringify(tx, null, 2))
-}
-
-const mergeSplit = async (conditionId, indexSets, parent = 0, amount = 1000) => {
-  console.log(`... Merging positions for position ${parent}, conditionId: ${conditionId}, amount: ${amount}. Partitions: ["${indexSets.join('", "')}"]`)
-  
-  const tx = await pms.mergePositions(
-    collateral.address, // collateral address
-    parent, // parent collection
-    conditionId, // condition id
-    indexSets, // partition
-    amount, // amount
-    { from: me, gas: 1e6 }
-  )
-  //console.log(JSON.stringify(tx, null, 2))
-}
-
-const redeemPositions = async (conditionId, indexSets) => {
-  console.log(`... Redeeming position for condition ${conditionId}, Partitions: ["${indexSets.join('", "')}"]`)
-  const tx = await pms.redeemPositions(
-    collateral.address,
-    0,
-    conditionId,
-    indexSets,
-    { from: me }
-  )
-  console.log(JSON.stringify(tx, null, 2))
-}
 
 const getPositionBalance = async (account, positionId) => {
   const positionBalance = await pms.balanceOf(
@@ -88,15 +16,18 @@ const getPositionBalance = async (account, positionId) => {
 }
 
 const init = async () => {
-  const PredictionMarketSystem = await getContract(PredictionMarketSystemArtifact)
-  const WETH9 = await getContract(WETH9Artifact)
+  const myCondition = new Condition()
+  await myCondition.prepare(me, "something", 3)
 
+  await TokenTransfer.addDepositAndApprovalAmount(1e19)
 
-  pms = await PredictionMarketSystem.deployed()
-  collateral = await WETH9.deployed()
+  const ethSplit = await Position.createCollateralSplit(myCondition.id, [1, 2, 4], 1000)
+
+  await myCondition.resolve([1, 2, 100])
   
-  let marketData
-
+  await ethSplit.redeem()
+  //myCondition.split([1, 2, 4])
+  /*
   try {
     marketData = await prepareConditions(me, 3)
     console.dir(marketData)
@@ -161,6 +92,7 @@ const init = async () => {
     console.error(`Couldn't redeem positions: ${err.message}`)
     return
   }
+  */
 
 }
 
