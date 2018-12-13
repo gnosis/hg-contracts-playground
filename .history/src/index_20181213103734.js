@@ -64,11 +64,10 @@ const mergeSplit = async (conditionId, indexSets, parent = 0, amount = 1000) => 
     amount, // amount
     { from: me, gas: 1e6 }
   )
-  //console.log(JSON.stringify(tx, null, 2))
+  console.log(JSON.stringify(tx, null, 2))
 }
 
 const redeemPositions = async (conditionId, indexSets) => {
-  console.log(`... Redeeming position for condition ${conditionId}, Partitions: ["${indexSets.join('", "')}"]`)
   const tx = await pms.redeemPositions(
     collateral.address,
     0,
@@ -130,7 +129,7 @@ const init = async () => {
   const rootPositionId = keccak256(collateral.address + rootCollectionId.slice(2))
 
   try {
-    await createSplit(marketData.conditionId, [1, 2, 4], rootCollectionId, 500)
+    await createSplit(marketData.conditionId, [1, 2, 4], rootPositionId, 500)
   } catch (err) {
     console.error(`Couldn't split child position: ${err.message}`)
     return
@@ -143,7 +142,7 @@ const init = async () => {
   //console.log("child split balance: " + childBalance.toString())
 
   try {
-    await mergeSplit(marketData.conditionId, [1, 2, 4], rootCollectionId, 500)
+    await mergeSplit(conditionId, [1, 2, 4], rootCollectionId, 500)
   } catch (err) {
     console.error(`Couldn't merge back to collateral: ${err.message}`)
     return
@@ -156,7 +155,7 @@ const init = async () => {
   //console.log(balance.toString())
 
   try {
-    await redeemPositions(marketData.conditionId, [2])
+    await redeemPositions(conditionId, [2])
   } catch (err) {
     console.error(`Couldn't redeem positions: ${err.message}`)
     return

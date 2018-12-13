@@ -1,0 +1,19 @@
+{
+  "name": "hg-contracts-playground",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "run-with-testrpc -l 20000000 --noVMErrorsOnRPCResponse true 'truffle migrate && node src/index.js'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bignumber.js": "^8.0.1",
+    "run-with-testrpc": "^0.3.0",
+    "truffle": "^4.1.14",
+    "truffle-contract": "^3.0.6",
+    "web3": "^1.0.0-beta.35"
+  }
+}

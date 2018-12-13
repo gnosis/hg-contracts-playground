@@ -1,6 +1,5 @@
 const Web3 = require('web3')
 const TruffleContract = require('truffle-contract')
-const { head } = require('lodash')
 
 // currently only uses ganache
 const getProvider = () => {
@@ -39,10 +38,7 @@ const getContract = async (artifact) => {
   }
 }
 
-const getEventFromTxLogs = (eventName, tx) => head(tx.logs.filter((log) => log.event === eventName))
-
 module.exports = {
   getContract,
   setupWeb3,
-  getEventFromTxLogs,
 }

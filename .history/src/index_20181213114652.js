@@ -68,7 +68,6 @@ const mergeSplit = async (conditionId, indexSets, parent = 0, amount = 1000) => 
 }
 
 const redeemPositions = async (conditionId, indexSets) => {
-  console.log(`... Redeeming position for condition ${conditionId}, Partitions: ["${indexSets.join('", "')}"]`)
   const tx = await pms.redeemPositions(
     collateral.address,
     0,
@@ -76,7 +75,7 @@ const redeemPositions = async (conditionId, indexSets) => {
     indexSets,
     { from: me }
   )
-  console.log(JSON.stringify(tx, null, 2))
+  //console.log(JSON.stringify(tx, null, 2))
 }
 
 const getPositionBalance = async (account, positionId) => {
@@ -143,7 +142,7 @@ const init = async () => {
   //console.log("child split balance: " + childBalance.toString())
 
   try {
-    await mergeSplit(marketData.conditionId, [1, 2, 4], rootCollectionId, 500)
+    await mergeSplit(conditionId, [1, 2, 4], rootCollectionId, 500)
   } catch (err) {
     console.error(`Couldn't merge back to collateral: ${err.message}`)
     return
@@ -156,7 +155,7 @@ const init = async () => {
   //console.log(balance.toString())
 
   try {
-    await redeemPositions(marketData.conditionId, [2])
+    await redeemPositions(conditionId, [2])
   } catch (err) {
     console.error(`Couldn't redeem positions: ${err.message}`)
     return

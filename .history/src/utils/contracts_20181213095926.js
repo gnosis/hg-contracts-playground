@@ -39,10 +39,9 @@ const getContract = async (artifact) => {
   }
 }
 
-const getEventFromTxLogs = (eventName, tx) => head(tx.logs.filter((log) => log.event === eventName))
+const getEventFromTxLogs = (eventName, tx) => head(tx.logs.filter((log) => event === eventName))
 
 module.exports = {
   getContract,
   setupWeb3,
-  getEventFromTxLogs,
 }

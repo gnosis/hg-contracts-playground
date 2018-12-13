@@ -1,14 +1,14 @@
 {
   "name": "hg-contracts-playground",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
-    "migrate": "cd ./node_modules/@gnosis.pm/hg-contracts && ./node_modules/.bin/truffle migrate --network mainnet",
+    "migrate": "cd ./node_modules/@gnosis.pm/hg-contracts && ../.bin/truffle migrate --network mainnet",
     "start": "./node_modules/.bin/run-with-testrpc -d -l 20000000 --noVMErrorsOnRPCResponse true 'npm run migrate && node src/index.js'"
   },
   "keywords": [],
-  "author": "Gnosis",
+  "author": "",
   "license": "ISC",
   "dependencies": {
     "@gnosis.pm/hg-contracts": "^2.0.1",

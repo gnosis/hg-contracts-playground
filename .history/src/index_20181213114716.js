@@ -68,7 +68,6 @@ const mergeSplit = async (conditionId, indexSets, parent = 0, amount = 1000) => 
 }
 
 const redeemPositions = async (conditionId, indexSets) => {
-  console.log(`... Redeeming position for condition ${conditionId}, Partitions: ["${indexSets.join('", "')}"]`)
   const tx = await pms.redeemPositions(
     collateral.address,
     0,
@@ -76,7 +75,7 @@ const redeemPositions = async (conditionId, indexSets) => {
     indexSets,
     { from: me }
   )
-  console.log(JSON.stringify(tx, null, 2))
+  //console.log(JSON.stringify(tx, null, 2))
 }
 
 const getPositionBalance = async (account, positionId) => {
